@@ -1,12 +1,15 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 
 from .serializers import SignupSerializer, LoginSerializer
+
+from rest_framework_simplejwt.exceptions import TokenError
+
 
 User = get_user_model()
 
@@ -54,3 +57,26 @@ class LoginView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+        
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        refresh_token = request.data.get("refresh")
+        
+        if not refresh_token:
+            return Response(
+                {"message" : "refresh 토큰이 필요합니다."},
+                status=status.HTTP_400_BAD_REQUEST    
+            )
+        
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"message": "로그아웃 되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
+
+        except TokenError as e:
+            return Response({"message": f"토큰 에러: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({"message": f"기타 에러: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
