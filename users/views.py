@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 
-from .serializers import SignupSerializer, LoginSerializer
+from .serializers import SignupSerializer, LoginSerializer, UserUpdateSerializer
 
 
 
@@ -68,3 +68,10 @@ class LogoutView(APIView):
             {"message": "로그아웃 되었습니다. (클라이언트에서 access 토큰을 삭제하세요)"},
             status=status.HTTP_200_OK
         )
+        
+class UserUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
