@@ -2,13 +2,11 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 
 from .serializers import SignupSerializer, LoginSerializer
 
-from rest_framework_simplejwt.exceptions import TokenError
 
 
 User = get_user_model()
@@ -17,6 +15,13 @@ class SignupView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = SignupSerializer
     permission_classes = [AllowAny]
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {"message": "회원 가입이 성공적으로 진행되었습니다."},
+            status=status.HTTP_201_CREATED
+        )
     
 class LoginView(APIView):
     permission_classes = [AllowAny]
