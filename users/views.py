@@ -79,3 +79,17 @@ class UserUpdateView(generics.RetrieveUpdateAPIView):
         if self.request.method == "GET":
             return UserProfileSerializer
         return UserUpdateSerializer
+    
+class UserDeleteView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
+    
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.delete()
+        return Response(
+            {"message": "회원 탈퇴가 성공적으로 진행되었습니다."},
+            status=status.HTTP_200_OK
+        )
