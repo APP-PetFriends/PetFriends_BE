@@ -40,3 +40,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=value).exclude(pk=self.instance.pk).exists():
             raise serializers.ValidationError("이미 사용 중인 닉네임입니다.")
         return value
+    
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "email")
+        read_only_fields = ("email", "username")
