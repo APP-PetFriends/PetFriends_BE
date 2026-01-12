@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model, authenticate
 
-from .serializers import SignupSerializer, LoginSerializer, UserUpdateSerializer
+from .serializers import SignupSerializer, LoginSerializer, UserUpdateSerializer, UserProfileSerializer
 
 
 
@@ -70,8 +70,12 @@ class LogoutView(APIView):
         )
         
 class UserUpdateView(generics.RetrieveUpdateAPIView):
-    serializer_class = UserUpdateSerializer
     permission_classes = [IsAuthenticated]
     
     def get_object(self):
         return self.request.user
+    
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserProfileSerializer
+        return UserUpdateSerializer
