@@ -50,7 +50,7 @@ class LoginView(APIView):
                     "email" : user.email,  
                 },
                 "access" : str(refresh.access_token),
-                "refresh(로그인 연장 시 필요)" : str(refresh),
+                "refresh" : str(refresh),
             },
             status=status.HTTP_200_OK,
         )
